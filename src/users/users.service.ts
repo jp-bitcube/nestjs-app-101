@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Role, User } from './users.type';
+import { UpdateUserDto } from './dto/update-users.dto';
+import { CreateUserDto } from './dto/create-users.dto';
 
 @Injectable()
 export class UsersService {
@@ -40,21 +42,21 @@ export class UsersService {
     return Math.floor(Math.random() * max);
   }
 
-  create(user: User) {
+  create(createUserDto: CreateUserDto) {
     const id = this.getRandomInt(1000);
     const newUser = {
       id,
-      ...user,
+      ...createUserDto,
     };
     this.users.push(newUser);
 
     return newUser;
   }
 
-  update(id: number, updatedUser: Partial<User>) {
+  update(id: number, updateUserDto: UpdateUserDto) {
     this.users = this.users.map((u) => {
       if (u.id === id) {
-        return { ...u, ...updatedUser };
+        return { ...u, ...updateUserDto };
       }
 
       return u;
