@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Role, User } from './users.type';
 import { UpdateUserDto } from './dto/update-users.dto';
 import { CreateUserDto } from './dto/create-users.dto';
@@ -28,14 +28,22 @@ export class UsersService {
 
   findAll(role?: Role) {
     if (role) {
-      return this.users.filter((user) => user.role === role);
+      const users = this.users.filter((user) => user.role === role);
+
+      if (users.length === 0) throw new NotFoundException('User Role Not Found');
+
+      return users;
     }
 
     return this.users;
   }
 
   findOne(id: number) {
-    return this.users.find((user) => user.id === id);
+    const user = this.users.find((user) => user.id === id);
+
+    if (!user) throw new NotFoundException('User Not Found');
+
+    return user;
   }
 
   getRandomInt(max: number) {
@@ -67,6 +75,8 @@ export class UsersService {
 
   delete(id: number) {
     const removedUser = this.findOne(id);
+
+    if (!removedUser) throw new NotFoundException('User Not Found');
 
     this.users = this.users.filter((user) => user.id !== id);
 
